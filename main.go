@@ -34,9 +34,9 @@ func main() {
 	router.Use(app.JwtAuthentication)
 
 	port := os.Getenv("port")
-	if port == "" {
-		port = "8000"
-	}
+	// if port == "" {
+	// 	port = "8000"
+	// }
 
 	utils.Logging.Printf("port : %s", port)
 	utils.Logging.Fatal(http.ListenAndServe(":"+port, router))
