@@ -39,7 +39,7 @@ func main() {
 	// }
 
 	utils.Logging.Printf("port : %s", os.Getenv("port"))
-	utils.Logging.Fatal(http.ListenAndServe(":"+port, router))
+	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("port"), router))
 }
 
 func endpoint() {
