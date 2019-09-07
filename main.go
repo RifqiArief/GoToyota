@@ -38,8 +38,8 @@ func main() {
 	// 	port = "9000"
 	// }
 
-	utils.Logging.Printf("port : %s", os.Getenv("port"))
-	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("port"), router))
+	utils.Logging.Printf("port : %s", os.Getenv("PORT"))
+	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
 
 func endpoint() {
