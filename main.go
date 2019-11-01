@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 
 	"github.com/GoToyota/app"
 	"github.com/GoToyota/controller"
@@ -32,16 +34,16 @@ func main() {
 
 	router.Use(app.JwtAuthentication)
 
-	utils.Logging.Fatal(http.ListenAndServe(":8081", router))
+	// utils.Logging.Fatal(http.ListenAndServe(":8081", router))
 
-	// err = godotenv.Load("config/log.env")
-	// if err != nil {
-	// 	log.Println("utils/logger/line:19")
-	// 	return
-	// }
+	err = godotenv.Load("config/log.env")
+	if err != nil {
+		log.Println("utils/logger/line:19")
+		return
+	}
 
-	// utils.Logging.Printf("port : %s", os.Getenv("PORT"))
-	// utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	utils.Logging.Printf("port : %s", os.Getenv("PORT"))
+	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
 
 func endpoint() {
