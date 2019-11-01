@@ -32,10 +32,10 @@ func main() {
 
 	router.Use(app.JwtAuthentication)
 
-	utils.Logging.Fatal(http.ListenAndServe(":8081", router))
+	// utils.Logging.Fatal(http.ListenAndServe(":8081", router))
 
-	// utils.Logging.Printf("port : %s", os.Getenv("PORT"))
-	// utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	utils.Logging.Printf("port : %s", os.Getenv("PORT"))
+	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
 
 func endpoint() {
