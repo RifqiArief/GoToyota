@@ -37,7 +37,7 @@ func AddOpration(opration []*Oprasional) (map[string]interface{}, error) {
 	return response, nil
 }
 
-func GetOpration(idBengkel int) (map[string]interface{}, []object.Oprasional) {
+func GetOpration(idBengkel int) map[string]interface{} {
 	query := fmt.Sprintf(`
 	select 
 	coalesce(nullif(hari,''),' ') as hari ,
@@ -50,7 +50,7 @@ func GetOpration(idBengkel int) (map[string]interface{}, []object.Oprasional) {
 	var opr []object.Oprasional
 	rows, err := db.Query(query)
 	if err != nil {
-		return utils.Message(false, "opration.model.go, line:54 "+err.Error()), nil
+		return utils.Message(false, "opration.model.go, line:54 "+err.Error())
 	}
 
 	for rows.Next() {
@@ -61,12 +61,14 @@ func GetOpration(idBengkel int) (map[string]interface{}, []object.Oprasional) {
 			&o.Tutup,
 		)
 		if err != nil {
-			return utils.Message(false, "opratin.model.go, line:68 "+err.Error()), nil
+			return utils.Message(false, "opratin.model.go, line:68 "+err.Error())
 		}
 		opr = append(opr, o)
 	}
 
-	return nil, opr
+	response := utils.Message(true, "Success")
+	response["response"] = opr
+	return response
 }
 
 //edit opration

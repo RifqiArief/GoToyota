@@ -112,23 +112,24 @@ var LoginBengkel = func(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, res)
 		return
 	}
-	res, objOpration := model.GetOpration(objBengkel.IdBengkel)
-	utils.Logging.Println(res)
-	if res != nil {
-		utils.Response(w, res)
-		return
-	}
+
+	// res, objOpration := model.GetOpration(objBengkel.IdBengkel)
+	// utils.Logging.Println(res)
+	// if res != nil {
+	// 	utils.Response(w, res)
+	// 	return
+	// }
 
 	data := object.LoginBengkel{
-		IdBengkel:  objBengkel.IdBengkel,
-		Nama:       objBengkel.Nama,
-		Email:      objBengkel.Email,
-		Telepon:    objBengkel.Telepon,
-		Gambar:     objBengkel.Gambar,
-		Token:      objBengkel.Token,
-		IdRole:     objBengkel.IdRole,
-		Lokasi:     objLocation,
-		Oprasional: objOpration,
+		IdBengkel: objBengkel.IdBengkel,
+		Nama:      objBengkel.Nama,
+		Email:     objBengkel.Email,
+		Telepon:   objBengkel.Telepon,
+		Gambar:    objBengkel.Gambar,
+		Token:     objBengkel.Token,
+		IdRole:    objBengkel.IdRole,
+		Lokasi:    objLocation,
+		// Oprasional: objOpration,
 	}
 
 	response := utils.Message(true, "Success")

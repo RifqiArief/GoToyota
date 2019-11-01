@@ -3,10 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 
 	"github.com/GoToyota/app"
 	"github.com/GoToyota/controller"
@@ -34,16 +32,16 @@ func main() {
 
 	router.Use(app.JwtAuthentication)
 
-	// utils.Logging.Fatal(http.ListenAndServe(":8081", router))
+	utils.Logging.Fatal(http.ListenAndServe(":8081", router))
 
-	err = godotenv.Load("config/log.env")
-	if err != nil {
-		log.Println("utils/logger/line:19")
-		return
-	}
+	// err = godotenv.Load("config/log.env")
+	// if err != nil {
+	// 	log.Println("utils/logger/line:19")
+	// 	return
+	// }
 
-	utils.Logging.Printf("port : %s", os.Getenv("PORT"))
-	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	// utils.Logging.Printf("port : %s", os.Getenv("PORT"))
+	// utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
 
 func endpoint() {
@@ -70,6 +68,7 @@ func endpoint() {
 	router.HandleFunc("/api/workshop/kota={kota}", controller.GetBengkelKota).Methods("GET")
 	router.HandleFunc("/api/workshop/id-workshop={id}", controller.GetBengkelId).Methods("GET")
 	router.HandleFunc("/api/workshop-all", controller.GetAllBengkel).Methods("GET")
+	router.HandleFunc("/api/workshop/id-opration={id}", controller.GetOpration).Methods("GET")
 	router.HandleFunc("/api/add-car", controller.AddKendaraan).Methods("POST")
 	router.HandleFunc("/api/car/id-mobil={id}", controller.GetKendaraanId).Methods("GET")
 	router.HandleFunc("/api/jenis-service", controller.GetJenisService).Methods("GET")
