@@ -39,7 +39,7 @@ func main() {
 	err = godotenv.Load("config/log.env")
 	if err != nil {
 		log.Println("utils/logger/line:19")
-		return err
+		return
 	}
 
 	utils.Logging.Printf("port : %s", os.Getenv("PORT"))
