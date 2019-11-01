@@ -88,3 +88,43 @@ var GetAllUser = func(w http.ResponseWriter, r *http.Request) {
 	utils.Logging.Println(string(resLog))
 	utils.Response(w, res)
 }
+
+var EditProfile = func(w http.ResponseWriter, r *http.Request) {
+
+	body, _ := ioutil.ReadAll(r.Body)
+	utils.Logging.Println(string(body))
+	defer r.Body.Close()
+
+	user := &model.User{}
+	err := json.Unmarshal(body, user)
+	if err != nil {
+		utils.Response(w, utils.Message(false, "Invalid request "+err.Error()))
+		return
+	}
+
+	resUser := user.UpdateUser()
+
+	resLog, _ := json.Marshal(resUser)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, resUser)
+}
+
+var ChangePassword = func(w http.ResponseWriter, r *http.Request) {
+
+	body, _ := ioutil.ReadAll(r.Body)
+	utils.Logging.Println(string(body))
+	defer r.Body.Close()
+
+	user := &model.ChangePassword{}
+	err := json.Unmarshal(body, user)
+	if err != nil {
+		utils.Response(w, utils.Message(false, "Invalid request "+err.Error()))
+		return
+	}
+
+	resUser := user.ChangePassword()
+
+	resLog, _ := json.Marshal(resUser)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, resUser)
+}

@@ -96,6 +96,7 @@ func LoginBengkel(email, password string) (map[string]interface{}, *Bengkel) {
 	coalesce(nullif(nama,''),' ') as nama,
 	coalesce(nullif(telepon,''),' ') as telepon,
 	coalesce(nullif(gambar,''),' ') as gambar,
+	coalesce(nullif(id_role,null),0) as id_role,
 	coalesce(nullif(created_at,null),'2000-01-01 00:00:00') as created_at,
 	coalesce(nullif(updated_at,null),'2000-01-01 00:00:00') as updated_at,
 	coalesce(nullif(delete_at,null),'2000-01-01 00:00:00') as delete_at
@@ -131,6 +132,7 @@ func LoginBengkel(email, password string) (map[string]interface{}, *Bengkel) {
 		Telepon:   bengkel.Telepon,
 		Gambar:    bengkel.Gambar,
 		Token:     tokenString,
+		IdRole:    bengkel.IdRole,
 	}
 	return nil, data
 }
@@ -184,7 +186,200 @@ func GetBengkelKota(kota string) map[string]interface{} {
 	return response
 }
 
-//get bengkel terdekat
+//get bengkel by provinsi
+func GetBengkelProvinsi(provinsi string) map[string]interface{} {
+	query := fmt.Sprintf(`
+	select 
+	coalesce(nullif(bengkel.id_bengkel,null),-1) as id_bengkel,
+	coalesce(nullif(nama,''),' ') as nama,
+	coalesce(nullif(email,''),' ') as email ,
+	coalesce(nullif(telepon,''),' ') as telepon,
+	coalesce(nullif(alamat,''),' ') as alamat,
+	coalesce(nullif(kota,''),' ') as kota,
+	coalesce(nullif(provinsi,''),' ') as provinsi,
+	coalesce(nullif(gambar,''),' ') as gambar,
+	coalesce(nullif(longitude,null),0) as longitude,
+	coalesce(nullif(latitude,null),0) as latitude
+	from bengkel left join lokasi on bengkel.id_bengkel = lokasi.id_bengkel
+	where lokasi.provinsi = '%s'`, strings.ToLower(provinsi))
 
-//update bengkel
+	utils.Logging.Println(query)
+	var bengkel []object.GetAllBengkel
+	rows, err := db.Query(query)
+	if err != nil {
+		return utils.Message(false, "bengkel.model.go, line:208 "+err.Error())
+	}
+
+	for rows.Next() {
+		var b object.GetAllBengkel
+		err = rows.Scan(
+			&b.IdBengkel,
+			&b.Nama,
+			&b.Email,
+			&b.Telepon,
+			&b.Alamat,
+			&b.Kota,
+			&b.Provinsi,
+			&b.Gambar,
+			&b.Longitude,
+			&b.Latitude,
+		)
+		if err != nil {
+			return utils.Message(false, "bengkel.model.go, line:226 "+err.Error())
+		}
+		bengkel = append(bengkel, b)
+	}
+	response := utils.Message(true, "Success")
+	response["response"] = bengkel
+	utils.Logging.Println(response)
+	return response
+}
+
+//get bengkel by Id
+func GetBengkelId(IdBengkel int) map[string]interface{} {
+	query := fmt.Sprintf(`
+	select 
+	coalesce(nullif(bengkel.id_bengkel,null),-1) as id_bengkel,
+	coalesce(nullif(nama,''),' ') as nama,
+	coalesce(nullif(email,''),' ') as email ,
+	coalesce(nullif(telepon,''),' ') as telepon,
+	coalesce(nullif(alamat,''),' ') as alamat,
+	coalesce(nullif(kota,''),' ') as kota,
+	coalesce(nullif(provinsi,''),' ') as provinsi,
+	coalesce(nullif(gambar,''),' ') as gambar,
+	coalesce(nullif(longitude,null),0) as longitude,
+	coalesce(nullif(latitude,null),0) as latitude
+	from bengkel left join lokasi on bengkel.id_bengkel = lokasi.id_bengkel
+	where bengkel.id_bengkel = %v`, IdBengkel)
+
+	utils.Logging.Println(query)
+	var bengkel []object.GetAllBengkel
+	rows, err := db.Query(query)
+	if err != nil {
+		return utils.Message(false, "bengkel.model.go, line:258 "+err.Error())
+	}
+
+	for rows.Next() {
+		var b object.GetAllBengkel
+		err = rows.Scan(
+			&b.IdBengkel,
+			&b.Nama,
+			&b.Email,
+			&b.Telepon,
+			&b.Alamat,
+			&b.Kota,
+			&b.Provinsi,
+			&b.Gambar,
+			&b.Longitude,
+			&b.Latitude,
+		)
+		if err != nil {
+			return utils.Message(false, "bengkel.model.go, line:276 "+err.Error())
+		}
+		bengkel = append(bengkel, b)
+	}
+	response := utils.Message(true, "Success")
+	response["response"] = bengkel
+	utils.Logging.Println(response)
+	return response
+}
+
+//get all bengkel
+func GetAllBengkel() map[string]interface{} {
+	query := fmt.Sprintf(`
+	select 
+	coalesce(nullif(bengkel.id_bengkel,null),-1) as id_bengkel,
+	coalesce(nullif(nama,''),' ') as nama,
+	coalesce(nullif(email,''),' ') as email ,
+	coalesce(nullif(telepon,''),' ') as telepon,
+	coalesce(nullif(alamat,''),' ') as alamat,
+	coalesce(nullif(kota,''),' ') as kota,
+	coalesce(nullif(provinsi,''),' ') as provinsi,
+	coalesce(nullif(gambar,''),' ') as gambar,
+	coalesce(nullif(longitude,null),0) as longitude,
+	coalesce(nullif(latitude,null),0) as latitude
+	from bengkel left join lokasi on bengkel.id_bengkel = lokasi.id_bengkel`)
+
+	utils.Logging.Println(query)
+	var bengkel []object.GetAllBengkel
+	rows, err := db.Query(query)
+	if err != nil {
+		return utils.Message(false, "bengkel.model.go, line:305 "+err.Error())
+	}
+
+	for rows.Next() {
+		var b object.GetAllBengkel
+		err = rows.Scan(
+			&b.IdBengkel,
+			&b.Nama,
+			&b.Email,
+			&b.Telepon,
+			&b.Alamat,
+			&b.Kota,
+			&b.Provinsi,
+			&b.Gambar,
+			&b.Longitude,
+			&b.Latitude,
+		)
+		if err != nil {
+			return utils.Message(false, "bengkel.model.go, line:323 "+err.Error())
+		}
+		bengkel = append(bengkel, b)
+	}
+	response := utils.Message(true, "Success")
+	response["response"] = bengkel
+	utils.Logging.Println(response)
+	return response
+}
+
+//Edit bengkel
+func (bengkel *Bengkel) EditBengkel() map[string]interface{} {
+	var idBengkel int
+	createTime := time.Now()
+	query := `update bengkel set 
+	updated_at=$1, 
+	nama= $2, 
+	telepon=$3, 
+	gambar=$4, 
+	id_role=$5
+	where id_bengkel= $6 returning id_bengkel`
+	err := db.QueryRow(query, createTime.Format("01-02-2006 15:04:05"), bengkel.Nama, bengkel.Telepon, bengkel.Gambar, bengkel.IdRole, bengkel.IdBengkel).Scan(&idBengkel)
+	utils.Logging.Println(idBengkel)
+	utils.Logging.Println(query)
+
+	if err != nil {
+		utils.Logging.Println("bengkel.model.go, line:350")
+		utils.Logging.Println(err.Error())
+		return utils.Message(false, "Failed edit bengekel, "+err.Error())
+	}
+
+	response := utils.Message(true, "Success edit bengkel")
+	return response
+}
+
+//Edit bengkel location
+func (loc *Lokasi) EditLocation() map[string]interface{} {
+	var idBengkel int
+	createTime := time.Now()
+	query := `update lokasi set 
+	updated_at=$1, 
+	alamat= $2, 
+	kota=$3, 
+	provinsi=$4, 
+	longitude=$5,
+	latitude=$6
+	where id_bengkel=$7  returning id_bengkel`
+	err := db.QueryRow(query, createTime.Format("01-02-2006 15:04:05"), loc.Alamat, loc.Kota, loc.Provinsi, loc.Longitude, loc.Latitude, loc.IdBengkel).Scan(&idBengkel)
+	utils.Logging.Println(query)
+
+	if err != nil {
+		utils.Logging.Println("bengkel.model.go, line:375")
+		utils.Logging.Println(err.Error())
+		return utils.Message(false, "Failed edit location, "+err.Error())
+	}
+
+	response := utils.Message(true, "Success edit bengkel")
+	return response
+}
+
 //delete bengkel

@@ -55,10 +55,12 @@ func (user *User) AddUser() (map[string]interface{}, bool) {
 		utils.Logging.Println(res)
 		return res, false
 	}
+
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return utils.Message(false, err.Error()), false
 	}
+
 	createTime := time.Now()
 	user.Password = string(hash)
 	var idUser int
@@ -69,7 +71,8 @@ func (user *User) AddUser() (map[string]interface{}, bool) {
 	utils.Logging.Println(idUser)
 	utils.Logging.Println(query)
 	if err != nil {
-		utils.Logging.Println("model/user.model.go, line:72")
+		utils.Logging.
+			Println("model/user.model.go, line:72")
 		utils.Logging.Println(err.Error())
 		return utils.Message(false, "Failed insert user"), false
 	}
@@ -195,3 +198,81 @@ func GetAllUser() map[string]interface{} {
 }
 
 //edit profil
+func (user *User) UpdateUser() map[string]interface{} {
+	var idUser int
+	querycheck := fmt.Sprintf(`
+	select 
+	coalesce(nullif(id_user,null),0) as id_user 
+	from users where id_user = %v`, user.IdUser)
+
+	err := db.Get(&idUser, querycheck)
+	utils.Logging.Println(querycheck)
+	if err != nil && err != sql.ErrNoRows {
+		return utils.Message(false, "user.model.go:209 "+err.Error())
+	}
+
+	if idUser == 0 {
+		return utils.Message(false, "No STNK not registered")
+	}
+
+	query := fmt.Sprintf(`
+	update users set 
+	updated_at=$1, 
+	nama= $2, 
+	telepon=$3, 
+	gambar=$4, 
+	alamat=$5, 
+	kota=$6 
+	where id_user= $7 returning id_user`)
+
+	createTime := time.Now()
+	err = db.QueryRow(query, createTime.Format("01-02-2006 15:04:05"), user.Nama, user.Telepon, user.Gambar, user.Alamat, user.Kota, user.IdUser).Scan(&idUser)
+	utils.Logging.Println(query)
+	if err != nil {
+		utils.Logging.Println("user.model.go, line:231")
+		utils.Logging.Println(err.Error())
+		return utils.Message(false, "Failed update kendaraan")
+	}
+
+	response := utils.Message(true, "Success edit profile")
+	return response
+}
+
+//ganti password
+func (data *ChangePassword) ChangePassword() map[string]interface{} {
+	query := fmt.Sprintf(`
+	select 
+	coalesce(nullif(id_user,null),0) as id_user,
+	coalesce(nullif(password,''),' ') as "password"
+	from users where id_user = '%v'`, data.IdUser)
+
+	var user ChangePassword
+	err := db.Get(&user, query)
+	if err != nil {
+		if strings.Contains(err.Error(), "no rows in result set") {
+			return utils.Message(false, "User not registered")
+		}
+		return utils.Message(false, "user.model.go, line:255 "+err.Error())
+	}
+
+	//chek password
+	err = bcrypt.CompareHashAndPassword([]byte(user.OldPassword), []byte(data.OldPassword))
+	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
+		return utils.Message(false, "Wrong password, please try again")
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(data.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return utils.Message(false, err.Error())
+	}
+
+	query = fmt.Sprintf(`update users set "password"='%v' where id_user=%v`, string(hash), user.IdUser)
+
+	_, err = db.Query(query)
+	if err != nil {
+		return utils.Message(false, "failed change password. Error : "+err.Error())
+	}
+
+	response := utils.Message(true, "Success change password")
+	return response
+}

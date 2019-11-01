@@ -30,6 +30,7 @@ type LoginBengkel struct {
 	Telepon    string       `json:"telepon"`
 	Gambar     string       `json:"image"`
 	Token      string       `json:"token"`
+	IdRole     int          `json:"id_role"`
 	Lokasi     Lokasi       `json:"lokasi"`
 	Oprasional []Oprasional `json:"oprasional"`
 }

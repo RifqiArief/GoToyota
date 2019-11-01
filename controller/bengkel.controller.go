@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 
@@ -125,6 +126,7 @@ var LoginBengkel = func(w http.ResponseWriter, r *http.Request) {
 		Telepon:    objBengkel.Telepon,
 		Gambar:     objBengkel.Gambar,
 		Token:      objBengkel.Token,
+		IdRole:     objBengkel.IdRole,
 		Lokasi:     objLocation,
 		Oprasional: objOpration,
 	}
@@ -148,4 +150,82 @@ var GetBengkelKota = func(w http.ResponseWriter, r *http.Request) {
 	resLog, _ := json.Marshal(res)
 	utils.Logging.Println(string(resLog))
 	utils.Response(w, res)
+}
+
+var GetBengkelProvinsi = func(w http.ResponseWriter, r *http.Request) {
+
+	param := mux.Vars(r)
+	provinsi := param["provinsi"]
+
+	res := model.GetBengkelProvinsi(provinsi)
+	utils.Logging.Println(res)
+
+	resLog, _ := json.Marshal(res)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, res)
+}
+
+var GetBengkelId = func(w http.ResponseWriter, r *http.Request) {
+
+	param := mux.Vars(r)
+	id, _ := strconv.Atoi(param["id"])
+
+	res := model.GetBengkelId(id)
+	utils.Logging.Println(res)
+
+	resLog, _ := json.Marshal(res)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, res)
+}
+
+var GetAllBengkel = func(w http.ResponseWriter, r *http.Request) {
+
+	res := model.GetAllBengkel()
+	utils.Logging.Println(res)
+
+	resLog, _ := json.Marshal(res)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, res)
+}
+
+var EditBengkel = func(w http.ResponseWriter, r *http.Request) {
+
+	body, _ := ioutil.ReadAll(r.Body)
+	utils.Logging.Println(string(body))
+	defer r.Body.Close()
+
+	bengkel := &model.Bengkel{}
+	err := json.Unmarshal(body, bengkel)
+	if err != nil {
+		utils.Response(w, utils.Message(false, "Invalid request "+err.Error()))
+		return
+	}
+
+	resBengkel := bengkel.EditBengkel()
+
+	resLog, _ := json.Marshal(resBengkel)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, resBengkel)
+}
+
+var EditLocation = func(w http.ResponseWriter, r *http.Request) {
+
+	body, _ := ioutil.ReadAll(r.Body)
+	utils.Logging.Println(string(body))
+	defer r.Body.Close()
+
+	loc := &model.Lokasi{}
+	err := json.Unmarshal(body, loc)
+	if err != nil {
+		utils.Response(w, utils.Message(false, "Invalid request "+err.Error()))
+		return
+	}
+
+	utils.Logging.Println(loc.IdBengkel)
+
+	resLoc := loc.EditLocation()
+
+	resLog, _ := json.Marshal(resLoc)
+	utils.Logging.Println(string(resLog))
+	utils.Response(w, resLoc)
 }

@@ -68,3 +68,5 @@ func GetOpration(idBengkel int) (map[string]interface{}, []object.Oprasional) {
 
 	return nil, opr
 }
+
+//edit opration
