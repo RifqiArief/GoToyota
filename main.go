@@ -34,12 +34,7 @@ func main() {
 
 	// utils.Logging.Fatal(http.ListenAndServe(":8081", router))
 
-	err := godotenv.Load("config/log.env")
-	if err != nil {
-		utils.Logging.Println("main.line:39")
-		return err
-	}
-	utils.Logging.Printf("port : %s", os.Getenv("PORT"))
+	// utils.Logging.Printf("port : %s", os.Getenv("PORT"))
 	utils.Logging.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
 
